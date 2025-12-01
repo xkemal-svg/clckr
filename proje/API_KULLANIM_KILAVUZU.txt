@@ -1,0 +1,188 @@
+========================================
+CLOAKER API KULLANIM KILAVUZU
+========================================
+
+GENEL BAKIS
+-----------
+Cloaker API, sitenize gelen ziyaretcileri analiz eder ve bot/VPN/proxy tespiti yapar.
+API'ye istek gonderdiginizde, ziyaretcinin durumuna gore yonlendirme URL'si doner.
+
+OZELLIKLER:
+- Bot tespiti (AI destekli)
+- VPN/Proxy tespiti
+- Fingerprint analizi
+- Ulke bazli filtreleme
+- OS bazli filtreleme
+- Coklu site destegi
+
+API KEY ALMA
+------------
+1. Admin paneline giris yapin
+   - URL: https://yourdomain.com/admin/
+
+2. API Anahtarlari sayfasina gidin
+   - Menuden: API Anahtarlari
+
+3. Yeni API Key olusturun
+   - Site secin
+   - Isim verin (opsiyonel)
+   - "API Anahtari Olustur" butonuna tiklayin
+
+4. API Key'i kopyalayin
+   - ONEMLI: API key sadece bir kez gosterilir, guvenli bir yerde saklayin!
+
+ENDPOINT BILGILERI
+------------------
+Base URL: https://yourdomain.com/api/cloaker_api.php
+Method: POST (onerilen) veya GET
+
+Authentication:
+1. Header: X-API-Key: YOUR_API_KEY (Onerilen)
+2. GET Parametresi: ?api_key=YOUR_API_KEY
+3. POST Body: {"api_key": "YOUR_API_KEY"}
+
+ENTEGRASYON YONTEMLERI
+----------------------
+
+1. JAVASCRIPT (Basit Kullanim)
+-------------------------------
+<script>
+const API_KEY = 'YOUR_API_KEY_HERE';
+const API_URL = 'https://yourdomain.com/api/cloaker_api.php';
+
+fetch(API_URL, {
+    method: 'POST',
+    headers: {
+        'X-API-Key': API_KEY,
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'ok' && data.redirect_url) {
+        window.location.href = data.redirect_url;
+    } else {
+        console.error('API Hatasi:', data.message);
+    }
+})
+.catch(error => {
+    console.error('Network Hatasi:', error);
+});
+</script>
+
+2. PHP (Server-Side)
+--------------------
+<?php
+$apiKey = 'YOUR_API_KEY_HERE';
+$apiUrl = 'https://yourdomain.com/api/cloaker_api.php';
+
+$ch = curl_init($apiUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'X-API-Key: ' . $apiKey,
+    'Content-Type: application/json'
+]);
+
+$response = curl_exec($ch);
+$data = json_decode($response, true);
+
+if ($data['status'] === 'ok' && !empty($data['redirect_url'])) {
+    header('Location: ' . $data['redirect_url']);
+    exit;
+}
+?>
+
+RESPONSE FORMATI
+----------------
+Basarili Response:
+{
+    "status": "ok",
+    "allowed": true,
+    "redirect_url": "https://normal-site.com",
+    "redirect_target": "normal",
+    "detection": {
+        "is_bot": false,
+        "is_proxy": false,
+        "bot_confidence": 15.5,
+        "fingerprint_score": 2,
+        "signals": []
+    },
+    "visitor": {
+        "ip": "192.168.1.1",
+        "country": "TR",
+        "os": "windows",
+        "browser": "Chrome"
+    }
+}
+
+Hata Response:
+{
+    "status": "error",
+    "message": "API anahtari gerekli."
+}
+
+SIK SORUNLAR VE COZUMLERI
+--------------------------
+
+SORUN 1: Yonlendirme yapmiyor
+COZUM:
+- Tarayici konsolunu acin (F12) ve hatalari kontrol edin
+- API key'in dogru oldugundan emin olun
+- API URL'in dogru oldugundan emin olun
+- Site ayarlarinda "Normal URL" ve "Fake URL" tanimli olmalidir
+- examples/api-debug.html dosyasini kullanarak test edin
+
+SORUN 2: redirect_url bos geliyor
+COZUM:
+1. Admin panel -> Ayarlar sayfasina gidin
+2. "Normal URL" ve "Fake URL" alanlarini doldurun
+3. Veya Site olusturduysaniz, Site ayarlarindan URL'leri kontrol edin
+
+SORUN 3: CORS hatasi
+COZUM:
+- API endpoint'inin CORS header'larini kontrol edin
+- Ayni domain'den mi cagiriyorsunuz kontrol edin
+- HTTPS kullandiginizdan emin olun
+
+SORUN 4: API key hatasi
+COZUM:
+- API key'in dogru kopyalandigindan emin olun
+- API key'in aktif oldugundan emin olun (Admin panelden kontrol edin)
+- Yeni bir API key olusturmayi deneyin
+
+TEST ARAÇLARI
+-------------
+1. examples/api-test.html - Basit test aracı
+2. examples/api-debug.html - Detaylı debug aracı
+3. examples/api-integration-ready.html - Hazır entegrasyon kodu
+
+GUVENLIK ONERILERI
+------------------
+1. API key'i guvenli tutun - public repository'lerde paylasmayin
+2. HTTPS kullanin - API isteklerini mutlaka HTTPS uzerinden yapin
+3. Rate limiting - Cok fazla istek gondermeyin
+4. Error handling - Hata durumlarini mutlaka handle edin
+
+DESTEK
+------
+Sorulariniz icin: sunucukrali58@gmail.com
+
+Gelistirici: Kahin
+Versiyon: 2.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

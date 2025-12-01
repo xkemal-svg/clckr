@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloaker API - Basit Örnek</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cloaker API Basit Örnek</h1>
+        <div id="status" class="loading">Ziyaretçi kontrol ediliyor...</div>
+        <div id="info"></div>
+    </div>
+
+    <script>
+        // ⚠️ BURAYA KENDİ API KEY'İNİZİ GİRİN
+        const API_KEY = 'YOUR_API_KEY_HERE';
+        const API_URL = 'https://yourdomain.com/api/cloaker_api.php';
+
+        async function checkVisitor() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': API_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    const statusDiv = document.getElementById('status');
+                    const infoDiv = document.getElementById('info');
+
+                    if (data.allowed) {
+                        statusDiv.innerHTML = '<h2 style="color: green;">✅ İzinli Ziyaretçi</h2>';
+                        infoDiv.innerHTML = `
+                            <div class="info">
+                                <h3>Ziyaretçi Bilgileri:</h3>
+                                <p><strong>IP:</strong> ${data.visitor.ip}</p>
+                                <p><strong>Ülke:</strong> ${data.visitor.country}</p>
+                                <p><strong>OS:</strong> ${data.visitor.os}</p>
+                                <p><strong>Tarayıcı:</strong> ${data.visitor.browser}</p>
+                                <p><strong>Bot Güven Skoru:</strong> ${data.detection.bot_confidence}%</p>
+                            </div>
+                            <p>Normal sayfaya yönlendiriliyorsunuz...</p>
+                        `;
+                        
+                        // 2 saniye sonra yönlendir
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 2000);
+                    } else {
+                        statusDiv.innerHTML = '<h2 style="color: red;">❌ Bot/VPN Tespit Edildi</h2>';
+                        infoDiv.innerHTML = `
+                            <div class="error">
+                                <h3>Tespit Bilgileri:</h3>
+                                <p><strong>Bot:</strong> ${data.detection.is_bot ? 'Evet' : 'Hayır'}</p>
+                                <p><strong>Proxy/VPN:</strong> ${data.detection.is_proxy ? 'Evet' : 'Hayır'}</p>
+                                <p><strong>Bot Güven Skoru:</strong> ${data.detection.bot_confidence}%</p>
+                                <p><strong>Fingerprint Skoru:</strong> ${data.detection.fingerprint_score}</p>
+                                <p><strong>Sinyaller:</strong> ${data.detection.signals.join(', ') || 'Yok'}</p>
+                            </div>
+                            <p>Fake sayfaya yönlendiriliyorsunuz...</p>
+                        `;
+                        
+                        // 2 saniye sonra yönlendir
+                        setTimeout(() => {
+                            window.location.href = data.redirect_url;
+                        }, 2000);
+                    }
+                } else {
+                    document.getElementById('status').innerHTML = 
+                        `<div class="error"><h2>❌ Hata</h2><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                document.getElementById('status').innerHTML = 
+                    `<div class="error"><h2>❌ Network Hatası</h2><p>${error.message}</p></div>`;
+            }
+        }
+
+        // Sayfa yüklendiğinde kontrol et
+        checkVisitor();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

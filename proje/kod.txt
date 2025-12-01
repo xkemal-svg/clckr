@@ -1,0 +1,3 @@
+<?php
+require_once 'cloacker.php';
+cloaker_main();

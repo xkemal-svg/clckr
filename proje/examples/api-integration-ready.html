@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    
+    <!-- 
+    ⚠️ ÖNEMLİ: Aşağıdaki değerleri kendi bilgilerinizle değiştirin!
+    -->
+    <script>
+        // ============================================
+        // AYARLAR - BURAYI DÜZENLEYİN
+        // ============================================
+        const CLOAKER_API_KEY = 'BURAYA_API_KEY_YAZIN';  // ⚠️ API key'inizi buraya yazın
+        const CLOAKER_API_URL = 'https://yourdomain.com/api/cloaker_api.php';  // ⚠️ Domain'inizi yazın
+        
+        // ============================================
+        // CLOAKER API ENTEGRASYONU
+        // ============================================
+        (function() {
+            // Hata yönetimi
+            function handleError(error, message) {
+                console.error('Cloaker API Error:', error);
+                // Hata durumunda ne yapılacağını burada belirleyin
+                // Örn: Normal sayfayı göster, hata mesajı göster, vs.
+            }
+            
+            // API'ye istek gönder
+            fetch(CLOAKER_API_URL, {
+                method: 'POST',
+                headers: {
+                    'X-API-Key': CLOAKER_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                cache: 'no-cache'
+            })
+            .then(function(response) {
+                // HTTP status kontrolü
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                // Response kontrolü
+                if (data.status !== 'ok') {
+                    handleError(null, data.message || 'API hatası');
+                    return;
+                }
+                
+                // Redirect URL kontrolü
+                if (!data.redirect_url) {
+                    console.warn('Cloaker: redirect_url boş! Site ayarlarınızı kontrol edin.');
+                    return;
+                }
+                
+                // Yönlendirme yap
+                window.location.replace(data.redirect_url);
+            })
+            .catch(function(error) {
+                handleError(error, 'Network hatası');
+            });
+        })();
+    </script>
+</head>
+<body>
+    <h1>Sayfa yükleniyor...</h1>
+    <p>Eğer bu mesajı görüyorsanız, yönlendirme çalışmıyor olabilir.</p>
+    <p>Tarayıcı konsolunu (F12) açarak hataları kontrol edin.</p>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
