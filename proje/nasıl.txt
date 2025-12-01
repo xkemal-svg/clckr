@@ -1,5 +1,0 @@
-HTML tarafında test etmek isterseniz, aynı sunucuda çalışan herhangi bir .html dosyasına 
-
-<script src="/embed/cloacker.js"></script>
-
-ekleyip sayfayı açın.
